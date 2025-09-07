@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, signal, inject, computed, WritableSignal, Signal } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, Validators, FormControl } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { GeminiService } from './services/gemini.service';
 import { DashboardData, FormValue } from './models/dashboard.model';
 import jsPDF from 'jspdf';
@@ -11,7 +10,7 @@ import html2canvas from 'html2canvas';
   standalone: true,
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ReactiveFormsModule, CommonModule]
+  imports: [ReactiveFormsModule]
 })
 export class AppComponent {
   private geminiService = inject(GeminiService);
