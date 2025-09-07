@@ -1,0 +1,24 @@
+/* Add any component-specific styles here, especially for overriding or targeting third-party/generated elements like D3 SVGs */
+
+/* For D3 charts, you can style the axes and text like this if needed */
+.tick text {
+    font-family: inherit; /* Ensures the chart text uses the application's font */
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.card-interactive {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card-interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+}

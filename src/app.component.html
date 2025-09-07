@@ -1,0 +1,474 @@
+<main class="min-h-screen bg-slate-100 text-slate-800 p-4 sm:p-6 lg:p-8">
+  <div class="max-w-7xl mx-auto">
+    <header class="flex flex-wrap gap-4 justify-between items-center mb-8">
+      <div class="flex items-center space-x-3">
+        <div class="bg-indigo-600 p-2 rounded-lg">
+          <svg class="h-7 w-7 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 20.25C13.2426 20.25 14.25 19.2426 14.25 18C14.25 16.7574 13.2426 15.75 12 15.75C10.7574 15.75 9.75 16.7574 9.75 18C9.75 19.2426 10.7574 20.25 12 20.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 15.75V10.5M12 10.5C13.2426 10.5 14.25 9.49264 14.25 8.25C14.25 7.00736 13.2426 6 12 6C10.7574 6 9.75 7.00736 9.75 8.25C9.75 9.49264 10.7574 10.5 12 10.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 6V3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16.5 8.25L19.5 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7.5 8.25L4.5 5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16.5 18L20.25 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7.5 18H3.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M15 13.5L18.75 11.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 13.5L5.25 11.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">PPC Spider</h1>
+      </div>
+      @if (dashboardData()) {
+        <div class="flex items-center space-x-2">
+          <button (click)="startNewReport()" class="bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 flex items-center space-x-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+            </svg>
+            <span>New Report</span>
+          </button>
+          <button (click)="exportToPdf()" [disabled]="isExportingPdf()" class="bg-teal-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-colors duration-200 flex items-center space-x-2 disabled:bg-teal-400 disabled:cursor-wait">
+            @if(isExportingPdf()) {
+              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Exporting...</span>
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" />
+              </svg>
+              <span>Export as PDF</span>
+            }
+          </button>
+        </div>
+      }
+    </header>
+
+    @if (loading()) {
+      <div class="flex flex-col items-center justify-center text-center p-10 bg-white rounded-xl shadow-lg">
+        <svg class="animate-spin h-12 w-12 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="mt-4 text-lg font-semibold text-gray-700">{{ loadingMessage() }}</p>
+        <p class="mt-1 text-sm text-gray-500">The AI is crunching the numbers. This may take a moment.</p>
+      </div>
+    }
+
+    @if (error()) {
+      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md my-4" role="alert">
+        <p class="font-bold">Error</p>
+        <p>{{ error() }}</p>
+      </div>
+    }
+
+    @if (!dashboardData() && !loading()) {
+      <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg border border-slate-200/80">
+        @if (apiKeyMissing()) {
+          <h2 class="text-xl font-semibold text-gray-800 mb-1">Enter API Key</h2>
+          <p class="text-gray-500 mb-6">Please provide your Gemini API key to continue.</p>
+          <div class="flex items-start space-x-2">
+            <input [formControl]="apiKeyControl" type="password" placeholder="Your API Key" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            <button (click)="setApiKey()" [disabled]="apiKeyControl.invalid" class="px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-300">Save</button>
+          </div>
+        } @else {
+          <h2 class="text-xl font-semibold text-gray-800 mb-1">Generate Your Report</h2>
+          <p class="text-gray-500 mb-6">Fill in the details below to generate an AI-powered marketing analysis.</p>
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+            
+            <div class="col-span-1">
+              <label for="companyName" class="block text-sm font-medium text-gray-700">Company Name</label>
+              <input id="companyName" type="text" formControlName="companyName" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <div class="col-span-1">
+              <label for="targetLocation" class="block text-sm font-medium text-gray-700">Target Location</label>
+              <input id="targetLocation" type="text" formControlName="targetLocation" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <div class="col-span-1 grid grid-cols-3 gap-2">
+              <div class="col-span-2">
+                 <label for="adSpend" class="block text-sm font-medium text-gray-700">Monthly Ad Spend</label>
+                <input id="adSpend" type="number" formControlName="adSpend" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+              </div>
+              <div>
+                <label for="currency" class="block text-sm font-medium text-gray-700">Currency</label>
+                <select id="currency" formControlName="currency" class="mt-1 block w-full pl-3 pr-8 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                  <option>USD</option>
+                  <option>CAD</option>
+                  <option>EUR</option>
+                  <option>GBP</option>
+                  <option>AUD</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-span-1">
+              <label for="campaignObjective" class="block text-sm font-medium text-gray-700">Campaign Objective</label>
+              <select id="campaignObjective" formControlName="campaignObjective" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-slate-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option>Lead Generation</option>
+                <option>Brand Awareness</option>
+                <option>Sales</option>
+                <option>Website Traffic</option>
+              </select>
+            </div>
+
+            <div class="md:col-span-2">
+              <label for="keywords" class="block text-sm font-medium text-gray-700">Keywords/Theme (optional)</label>
+              <input id="keywords" type="text" formControlName="keywords" placeholder="e.g., enterprise saas, b2b software solutions" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <div class="md:col-span-2">
+              <label for="competitors" class="block text-sm font-medium text-gray-700">Competitors (comma-separated, optional)</label>
+              <input id="competitors" type="text" formControlName="competitors" class="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+            </div>
+
+            <div class="md:col-span-2 mt-4">
+              <button type="submit" [disabled]="form.invalid" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 disabled:cursor-not-allowed transition-colors duration-200">
+                Generate Dashboard
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    }
+
+    @if (dashboardData(); as data) {
+      <div id="dashboard-content" class="fade-in grid grid-cols-1 lg:grid-cols-3 gap-6 bg-slate-100">
+
+        <!-- Left Column -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+
+          <!-- Company Profile -->
+          <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+            <div class="flex flex-wrap gap-4 justify-between items-start mb-4">
+                <div>
+                    <h3 class="font-bold text-gray-800 text-xl">{{ data.companyProfile.name }}</h3>
+                    <a [href]="data.companyProfile.website" target="_blank" class="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-700">
+                        Visit Website
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" /><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" /></svg>
+                    </a>
+                </div>
+                <div class="text-right flex-shrink-0 space-x-4">
+                    <div>
+                        <div class="text-xs text-gray-500">Founded</div>
+                        <div class="font-semibold text-gray-800">{{ data.companyProfile.yearFounded }}</div>
+                    </div>
+                     <div>
+                        <div class="text-xs text-gray-500">Company Size</div>
+                        <div class="font-semibold text-gray-800">{{ data.companyProfile.companySize }}</div>
+                    </div>
+                </div>
+            </div>
+            <p class="text-sm text-gray-600 mb-5">{{ data.companyProfile.about }}</p>
+
+            <h4 class="text-sm font-semibold text-gray-700 mb-3">Avg. Monthly Website Traffic</h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                <div class="bg-slate-50 p-3 rounded-lg">
+                    <div class="text-xs text-gray-500 uppercase">Total</div>
+                    <div class="font-bold text-lg text-gray-800">{{ data.companyProfile.monthlyTraffic.total }}</div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg">
+                    <div class="text-xs text-gray-500 uppercase">Organic</div>
+                    <div class="font-bold text-lg text-gray-800">{{ data.companyProfile.monthlyTraffic.organic }}</div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg">
+                    <div class="text-xs text-gray-500 uppercase">Paid</div>
+                    <div class="font-bold text-lg text-gray-800">{{ data.companyProfile.monthlyTraffic.paid }}</div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg">
+                    <div class="text-xs text-gray-500 uppercase">Direct</div>
+                    <div class="font-bold text-lg text-gray-800">{{ data.companyProfile.monthlyTraffic.direct }}</div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg">
+                    <div class="text-xs text-gray-500 uppercase">Social</div>
+                    <div class="font-bold text-lg text-gray-800">{{ data.companyProfile.monthlyTraffic.social }}</div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg">
+                    <div class="text-xs text-gray-500 uppercase">Referral</div>
+                    <div class="font-bold text-lg text-gray-800">{{ data.companyProfile.monthlyTraffic.referral }}</div>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg">
+                    <div class="text-xs text-gray-500 uppercase">Email</div>
+                    <div class="font-bold text-lg text-gray-800">{{ data.companyProfile.monthlyTraffic.email }}</div>
+                </div>
+            </div>
+          </div>
+
+          <!-- Market Overview -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+              <h3 class="font-semibold text-gray-500 text-sm uppercase tracking-wider">Industry Type</h3>
+              <p class="text-2xl font-bold text-gray-800 mt-2">{{ data.marketOverview.industryType }}</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+              <h3 class="font-semibold text-gray-500 text-sm uppercase tracking-wider">Market Cap ({{ form.value.targetLocation }})</h3>
+              <p class="text-2xl font-bold text-gray-800 mt-2">{{ data.marketOverview.marketCap }}</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+              <h3 class="font-semibold text-gray-500 text-sm uppercase tracking-wider">Campaign Objective</h3>
+              <p class="text-2xl font-bold text-gray-800 mt-2">{{ form.value.campaignObjective }}</p>
+            </div>
+          </div>
+
+          <!-- Keyword Analysis: Top Keywords -->
+          <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+            <h3 class="font-semibold text-gray-800 text-lg mb-4">Top Keywords Analysis</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left text-gray-500">
+                <thead class="text-xs text-gray-700 uppercase bg-slate-100/80 rounded-t-lg">
+                  <tr>
+                    <th scope="col" class="px-4 py-3">Keyword</th>
+                    <th scope="col" class="px-4 py-3 text-right">Avg. Monthly Searches</th>
+                    <th scope="col" class="px-4 py-3 text-right">CPC Bid Range</th>
+                    <th scope="col" class="px-4 py-3 text-center">Competition</th>
+                    <th scope="col" class="px-4 py-3 text-center">12-Month Trend</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (keyword of data.keywordAnalysis.keywords; track keyword.term) {
+                    <tr class="bg-white border-b border-slate-200/80 hover:bg-slate-50">
+                      <th scope="row" class="px-4 py-4 font-medium text-gray-900 whitespace-nowrap">{{ keyword.term }}</th>
+                      <td class="px-4 py-4 text-right">{{ keyword.avgMonthlySearches.toLocaleString() }}</td>
+                      <td class="px-4 py-4 text-right font-mono">{{ keyword.cpcBidRange || 'N/A' }}</td>
+                      <td class="px-4 py-4 text-center">
+                        @if(keyword.competition) {
+                          <span class="px-2 py-1 text-xs font-medium rounded-full"
+                            [class]="{
+                                'bg-green-100 text-green-800': keyword.competition === 'Low',
+                                'bg-yellow-100 text-yellow-800': keyword.competition === 'Medium',
+                                'bg-red-100 text-red-800': keyword.competition === 'High'
+                            }">
+                            {{ keyword.competition }}
+                          </span>
+                        } @else {
+                          <span class="text-gray-400">N/A</span>
+                        }
+                      </td>
+                      <td class="px-4 py-4">
+                        <div class="flex items-center justify-center space-x-0.5 h-6 w-full" [title]="keyword.trend.join(', ')">
+                          @for (trend of keyword.trend; track $index) {
+                            <div class="w-2 bg-indigo-200 rounded-sm" [style.height.%]="(trend / maxTrendValue()) * 100"></div>
+                          }
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Competitor Analysis -->
+          @if(data.competitorAnalysis; as comp) {
+            <!-- High Level Comparison -->
+            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+                <h3 class="font-semibold text-gray-800 text-lg mb-4">Keyword Ranking Comparison (Top 5)</h3>
+                <div class="overflow-x-auto text-xs mt-4">
+                    <table class="w-full text-left text-gray-500">
+                        <thead class="text-gray-700 uppercase bg-slate-100/80">
+                            <tr>
+                                <th class="px-2 py-2">Keyword</th>
+                                @for(name of keywordRankingHeaders(); track name) {
+                                    <th class="px-2 py-2 text-center truncate" [title]="name">{{ name }}</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for(kw of comp.keywordRankingComparison.slice(0,5); track kw.keyword) {
+                            <tr class="border-b border-slate-200/80">
+                                <td class="px-2 py-2 font-medium text-gray-800 truncate" [title]="kw.keyword">{{kw.keyword}}</td>
+                                @for(name of keywordRankingHeaders(); track name) {
+                                <td class="px-2 py-2 text-center">{{ getRankingFor(kw, name) }}</td>
+                                }
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Competitor Deep Dive -->
+            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+                <h3 class="font-semibold text-gray-800 text-lg mb-6">Competitor Deep Dive</h3>
+                @if (comp.competitorsSuggested) {
+                    <div class="mb-6 bg-blue-50 border border-blue-200 text-blue-800 text-sm rounded-lg p-3">
+                    <p><span class="font-semibold">No competitors provided.</span> Here is an analysis of the top 5 dominating competitors suggested by the AI.</p>
+                    </div>
+                }
+                <div class="space-y-6">
+                    @for(competitor of comp.competitors; track competitor.name) {
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200/80">
+                        <div class="flex flex-wrap gap-4 justify-between items-start mb-4">
+                            <div>
+                                <h5 class="font-bold text-gray-800 text-lg">{{ competitor.name }}</h5>
+                                <a [href]="competitor.website" target="_blank" class="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-700">
+                                Visit Website
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" /><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" /></svg>
+                                </a>
+                            </div>
+                            <div class="text-right flex-shrink-0 space-y-2">
+                                <div>
+                                    <div class="text-xs text-gray-500">Founded</div>
+                                    <div class="font-semibold text-gray-800">{{ competitor.yearFounded }}</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-gray-500">Company Size</div>
+                                    <div class="font-semibold text-gray-800">{{ competitor.companySize }}</div>
+                                </div>
+                                <div>
+                                    <div class="text-xs text-gray-500">Est. Ad Spend</div>
+                                    <div class="font-semibold text-gray-800">{{ competitor.estimatedSpend }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600 my-3">{{competitor.about}}</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h6 class="text-sm font-semibold text-gray-700 mb-2">Top Keywords</h6>
+                            <ul class="space-y-2">
+                            @for(kw of competitor.topKeywords; track kw.keyword) {
+                                <li class="flex justify-between items-center text-sm">
+                                <span class="text-gray-600 truncate pr-2" [title]="kw.keyword">{{ kw.keyword }}</span>
+                                <span class="font-mono text-xs bg-slate-200 text-gray-700 px-2 py-1 rounded flex-shrink-0">{{ kw.estimatedCPC }}</span>
+                                </li>
+                            }
+                            </ul>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <h6 class="text-sm font-semibold text-gray-700 mb-2">Avg. Monthly Traffic</h6>
+                                <div class="grid grid-cols-3 gap-2 text-center">
+                                    <div class="bg-white p-2 rounded-md"><div class="text-xs text-gray-500">Total</div><div class="font-bold text-sm text-gray-800">{{ competitor.monthlyTraffic.total }}</div></div>
+                                    <div class="bg-white p-2 rounded-md"><div class="text-xs text-gray-500">Organic</div><div class="font-bold text-sm text-gray-800">{{ competitor.monthlyTraffic.organic }}</div></div>
+                                    <div class="bg-white p-2 rounded-md"><div class="text-xs text-gray-500">Paid</div><div class="font-bold text-sm text-gray-800">{{ competitor.monthlyTraffic.paid }}</div></div>
+                                    <div class="bg-white p-2 rounded-md"><div class="text-xs text-gray-500">Direct</div><div class="font-bold text-sm text-gray-800">{{ competitor.monthlyTraffic.direct }}</div></div>
+                                    <div class="bg-white p-2 rounded-md"><div class="text-xs text-gray-500">Social</div><div class="font-bold text-sm text-gray-800">{{ competitor.monthlyTraffic.social }}</div></div>
+                                    <div class="bg-white p-2 rounded-md"><div class="text-xs text-gray-500">Referral</div><div class="font-bold text-sm text-gray-800">{{ competitor.monthlyTraffic.referral }}</div></div>
+                                    <div class="bg-white p-2 rounded-md"><div class="text-xs text-gray-500">Email</div><div class="font-bold text-sm text-gray-800">{{ competitor.monthlyTraffic.email }}</div></div>
+                                </div>
+                            </div>
+                            <div>
+                                <h6 class="text-sm font-semibold text-gray-700 mb-2">Active Ad Platforms</h6>
+                                <div class="flex flex-wrap gap-2">
+                                @for(platform of competitor.activeAdPlatforms; track platform) {
+                                    <span class="inline-flex items-center text-xs font-medium bg-slate-200 text-gray-700 px-2 py-1 rounded-full">
+                                    @if(platform.toLowerCase().includes('google')) { <svg class="h-3 w-3 mr-1.5" viewBox="0 0 24 24" fill="currentColor"><path d="M21.54,11.5H12.31V13.43H17.83C17.63,14.8,16.8,16,15.54,16.86V19.3H18.4C20.36,17.43,21.54,14.6,21.54,11.5Z"/><path d="M12.31,22C15.1,22,17.45,21.05,19.3,19.3L16.54,16.86C15.68,17.45,14.54,17.83,12.31,17.83C9.9,17.83,7.86,16.2,7.05,14.05H4.1V16.6C5.83,20,8.78,22,12.31,22Z"/><path d="M7.05,14.05C6.86,13.46,6.75,12.8,6.75,12.19C6.75,11.58,6.86,11,7.05,10.4L4.1,7.86C3,9.75,3,12.2,3,12.2A10.2,10.2,0,0,0,4.1,16.6Z"/><path d="M12.31,6.58C13.78,6.58,15,7.1,16,8L18.48,5.6C16.8,4.2,14.75,3.38,12.31,3.38C8.78,3.38,5.83,5.4,4.1,7.86L7.05,10.4C7.86,8.2,9.9,6.58,12.31,6.58Z"/></svg> }{{ platform }}
+                                    </span>
+                                }
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+          }
+        </div>
+
+        <!-- Right Column -->
+        <div class="lg:col-span-1 flex flex-col gap-6">
+          <!-- Initial Campaign Strategy -->
+          <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+            <h3 class="font-semibold text-gray-800 text-lg mb-4">Initial Campaign Strategy</h3>
+            <div class="space-y-4">
+              <div class="flex justify-between items-baseline">
+                <span class="text-sm text-gray-500">Recommended Initial Spend</span>
+                <span class="font-bold text-lg text-gray-800">{{ data.initialCampaignStrategy.recommendedInitialSpend }}</span>
+              </div>
+              <div class="flex justify-between items-baseline">
+                <span class="text-sm text-gray-500">Recommended Start Location</span>
+                <span class="font-semibold text-gray-800 text-right">{{ data.initialCampaignStrategy.recommendedLocation }}</span>
+              </div>
+              <div>
+                <h4 class="text-sm font-semibold text-gray-700 mt-4 mb-2">Estimated Performance (First Month)</h4>
+                <ul class="space-y-2">
+                  @for(item of data.initialCampaignStrategy.estimatedPerformance; track item.metric) {
+                    <li class="flex justify-between items-center text-sm bg-slate-50 p-2 rounded-md">
+                      <span class="text-gray-600">{{ item.metric }}</span>
+                      <span class="font-semibold text-gray-800">{{ item.value }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Performance Projections -->
+          @if(data.initialCampaignStrategy.performanceProjections; as projections) {
+            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+              <h3 class="font-semibold text-gray-800 text-lg mb-4">Performance Projections</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                @for(projection of projections; track projection.timeframe) {
+                  <div class="bg-slate-50 p-4 rounded-lg border border-slate-200/80">
+                    <h4 class="font-semibold text-gray-700 text-center mb-3">{{ projection.timeframe }}</h4>
+                    <ul class="space-y-2">
+                      @for(item of projection.metrics; track item.metric) {
+                        <li class="flex justify-between items-center text-xs">
+                          <span class="text-gray-600">{{ item.metric }}</span>
+                          <span class="font-semibold text-gray-800">{{ item.value }}</span>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          <!-- Recommendations -->
+          <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+            <h3 class="font-semibold text-gray-800 text-lg mb-4">Recommendations</h3>
+            <div class="space-y-6">
+              <div>
+                <h4 class="font-medium text-gray-600 mb-3">Platform Recommendations</h4>
+                <div class="space-y-4">
+                  @for(platform of data.recommendations.platforms; track platform.name) {
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200/80">
+                      <div class="flex justify-between items-center mb-1">
+                        <h5 class="font-semibold text-gray-800">{{ platform.name }}</h5>
+                        <span class="text-sm font-bold text-indigo-600">{{ platform.suggestedBudgetAllocation }}%</span>
+                      </div>
+                      <p class="text-xs text-gray-600">{{ platform.reasoning }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+              <div>
+                <h4 class="font-medium text-gray-600 mb-3">Ad Type Recommendations</h4>
+                <div class="space-y-3">
+                  @for(adType of data.recommendations.adTypes; track adType.name) {
+                    <div class="bg-slate-50 p-3 rounded-lg border border-slate-200/80">
+                      <h5 class="font-semibold text-gray-800 text-sm">{{ adType.name }} <span class="text-xs font-normal text-gray-500">on {{ adType.platform }}</span></h5>
+                      <p class="text-xs text-gray-600 mt-1">{{ adType.reasoning }}</p>
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Opportunity Gaps -->
+          @if(data.competitorAnalysis?.opportunityGaps?.length) {
+            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200/80 card-interactive">
+              <h3 class="font-semibold text-gray-800 text-lg mb-4">Opportunity Gaps</h3>
+              <ul class="space-y-3">
+                @for(gap of data.competitorAnalysis.opportunityGaps; track gap) {
+                  <li class="flex items-start">
+                    <svg class="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="text-sm text-gray-600">{{ gap }}</span>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+
+        </div> <!-- closing right column -->
+
+      </div>
+    }
+
+  </div>
+</main>

@@ -1,0 +1,5 @@
+{
+  "name": "PPC Spider",
+  "description": "An interactive dashboard for performance marketing research. Input company details, budget, and objectives to get AI-powered insights on keywords, competitors, and platform recommendations.",
+  "requestFramePermissions": []
+}
