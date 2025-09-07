@@ -8,6 +8,7 @@ import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [ReactiveFormsModule, CommonModule]
