@@ -7,7 +7,7 @@ import { DashboardData, FormValue } from '../models/dashboard.model';
 })
 export class GeminiService {
   private genAI: GoogleGenAI | null = null;
-  apiKey = signal<string | null>(process.env.API_KEY ?? null);
+  apiKey = signal<string | null>(null);
 
   constructor() {
     if (this.apiKey()) {
@@ -240,7 +240,12 @@ export class GeminiService {
           responseSchema: schema,
         },
       });
-      const jsonString = response.text.trim();
+      
+      const text = response.text;
+      if (!text) {
+        throw new Error('Received an empty response from the AI. The model may have refused to answer.');
+      }
+      const jsonString = text.trim();
       const parsedData: DashboardData = JSON.parse(jsonString);
       return parsedData;
     } catch (error) {
